@@ -5,11 +5,36 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-
-app.use(cors());
 app.use(express.json());
 
-initializeDatabase();
+
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? "https://redux-school-management-backend.onrender.com/"  // Your frontend URL
+    : "http://localhost:3000",  // Local dev
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],  // Explicit DELETE
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
+
+async function startServer() {
+  try {
+    await initializeDatabase();  // Wait for DB connection
+    console.log("✅ Database connected");
+    
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+  }
+}
+
+startServer();
 
 app.get("/", (req, res) => {
   res.send("Hello, Express!");
@@ -76,9 +101,4 @@ app.delete("/students/:id", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Internal server error", details: error.message });
   }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
 });

@@ -60,23 +60,21 @@ app.post("/students/:id", async (req, res) => {
 
 app.delete("/students/:id", async (req, res) => {
   const studentId = req.params.id;
-
+  console.log("Delete attempt for ID: ", studentId)
   try {
     const deletedStudent = await Student.findByIdAndDelete(studentId);
-
+    console.log("Deleted student:", deletedStudent)
     if (!deletedStudent) {
       return res.status(404).json({ error: "Student not found" });
     }
 
-    res
-      .status(200)
-      .json({
+    res.status(200).json({
         message: "Student deleted successfully",
-        student: deletedStudent,
+        id: deletedStudent,
       });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error", details: error.message });
   }
 });
 

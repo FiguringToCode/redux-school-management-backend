@@ -2,22 +2,19 @@ const { initializeDatabase } = require("./db/db.connection");
 const { Student } = require("./models/students.model");
 
 const express = require("express");
-const cors = require("cors");
 const app = express();
 
 app.use(express.json());
 
 
+const cors = require('cors')
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? "https://redux-school-management-backend.onrender.com/"  // Your frontend URL
-    : "http://localhost:3000",  // Local dev
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],  // Explicit DELETE
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-};
+    origin: "*",
+    credentials: true,
+    optionSuccessStatus: 200
+}
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions))
 
 
 async function startServer() {
